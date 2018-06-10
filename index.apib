@@ -1,0 +1,2562 @@
+FORMAT: 1A
+
+# Ocicat API
+
+# Users [/users]
+用户资源表示
+
+## 使用选择的id来查询用户 [GET /users/{user}]
+
+
++ Parameters
+    + user: (integer, required) - 用户id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "uuid": "8758c471-f7e3-11e6-ab55-080027b55b5e",
+                    "username": "tristian.aufderhar",
+                    "email": "leanna19@kilback.com",
+                    "role_id": null,
+                    "role_type": null,
+                    "status": "active",
+                    "profile": {
+                        "nickname": null,
+                        "realname": null,
+                        "age": null,
+                        "gender": "secret",
+                        "phone": null
+                    }
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 搜索用户 [GET /users]
+可在url中使用username, email, uuid,status, role_type, role_id,nickname, realname, age, gender, phone
+可多个条件组合使用，此时返回的data中是数组
+
++ Parameters
+    + username: (string, optional) - 用户名
+    + email: (string, optional) - Email
+    + uuid: (string, optional) - uuid
+    + status: (string, optional) - 用户状态
+    + role_type: (string, optional) - 用户角色类型
+    + role_id: (integer, optional) - 用户角色id
+    + nickname: (string, optional) - 用户昵称
+    + realname: (string, optional) - 用户真名
+    + age: (string, optional) - 用户年龄
+    + gender: (string, optional) - 用户性别
+    + phone: (string, optional) - 用户电话号码
+
++ Request (application/x-www-form-urlencoded)
+    + Body
+
+            username={username}&email={email}&uuid={uuid}&status={status}&role_type={role_type}&role_id={role_id}&nickname={nickname}&realname={realname}&age={age}&gender={gender}&phone={phone}
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "uuid": "8758c471-f7e3-11e6-ab55-080027b55b5e",
+                    "username": "tristian.aufderhar",
+                    "email": "leanna19@kilback.com",
+                    "role_id": null,
+                    "role_type": null,
+                    "status": "active",
+                    "profile": {
+                        "nickname": null,
+                        "realname": null,
+                        "age": null,
+                        "gender": "secret",
+                        "phone": null
+                    }
+                }
+            }
+
++ Response 204 (application/json)
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+# Users [/users]
+用户资源表示
+
+## 添加一个用户 [POST /users]
+字段验证将在User模型内完成
+
++ Parameters
+    + username: (string, required) - 用户名，^[a-z][a-z0-9_.]{3,23}
+    + email: (string, required) - 用户邮箱，邮箱格式
+    + password: (string, required) - 用户密码
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "username": "example",
+                    "email": "example@mail.com",
+                    "password": "my_password"
+                }
+            }
+
++ Response 201 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/users/2589
+
++ Response 409 (application/json)
+    + Body
+
+            {
+                "message": "Conflicted.",
+                "status_code": "409",
+                "errors": {
+                    "username": "..."
+                }
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not create new user.",
+                "status_code": 422,
+                "errors": {
+                    "username": "The username field is required."
+                }
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 删除指定id的用户 [DELETE /users/{user}]
+
+
++ Parameters
+    + user: (integer, required) - 用户id
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/users/2589
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not delete a user.",
+                "status_code": 422,
+                "errors": {
+                    "...": "..."
+                }
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新指定用户 [PUT /users/{user}]
+
+
++ Parameters
+    + user: (integer, optional) - 用户id
+    + username: (string, required) - 用户名，^[a-z][a-z0-9_.]{3,23}
+    + email: (string, optional) - 用户邮箱，邮箱格式
+    + password: (string, optional) - 用户密码
+    + status: (string, optional) - 用户状态，枚举[active,suspend]
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "username": "example",
+                    "email": "example@mail.com",
+                    "password": "my_password",
+                    "status": "active"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/users/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 409 (application/json)
+    + Body
+
+            {
+                "message": "Conflicted.",
+                "status_code": "409",
+                "errors": {
+                    "username": "..."
+                }
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not update user.",
+                "status_code": 422,
+                "errors": {
+                    "...": "..."
+                }
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新指定用户信息 [PUT /users/{user}/profile]
+
+
++ Parameters
+    + user: (integer, optional) - 用户id
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "nickname": "example",
+                    "realname": "my name",
+                    "age": 18,
+                    "gender": "male",
+                    "phone": "12345678"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/users/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+# Users 角色 [/users/{user}/role]
+用户-角色资源表示
+
+## 获取一个用户角色的uri [GET /users/{user}/role]
+
+
++ Parameters
+    + user: (integer, required) - 用户id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "id": 3439,
+                "type": "admin",
+                "uri": "http:\/\/api.ocicat.dev\/admins\/3439"
+            }
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "User's role not exists.",
+                "status_code": "400"
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
+## 为用户附加一个角色 [PUT /users/{user}/role]
+
+
++ Parameters
+    + user: (integer, required) - 用户id
+    + role_id: (integer, required) - 角色id
+    + role_type: (string, required) - 角色类型
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "role_id": 123,
+                    "role_type": "admin"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/users/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "Missing field.",
+                "status_code": "400"
+            }
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "Wrong role type.",
+                "status_code": "400"
+            }
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "Role not found.",
+                "status_code": "400"
+            }
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "This role has already been attached.",
+                "status_code": "400"
+            }
+
++ Response 409 (application/json)
+    + Body
+
+            {
+                "message": "User already attached an role.",
+                "status_code": "409"
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 为用户解除角色附加 [DELETE /users/{user}/role]
+
+
++ Parameters
+    + user: (integer, required) - 用户id
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/users/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
+# Me [/me]
+当前用户资源表示
+
+## 获取token [POST /me]
+用用户名或邮箱，加上密码获取token
+
++ Parameters
+    + username: (string, optional) - 用户名，^[a-z][a-z0-9_.]{3,23}
+    + email: (string, optional) - 用户邮箱，邮箱格式
+    + password: (string, required) - 用户密码
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "username": "example",
+                    "email": "example@mail.com",
+                    "password": "my_password"
+                }
+            }
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "token": "..."
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "404"
+            }
+
++ Response 401 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "401"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新token [GET /me/refresh_token]
+token将在头部返回
+
++ Request (application/json)
+    + Headers
+
+            Authorization:  Bearer [user's token here]
+
++ Response 200 (application/json)
+    + Headers
+
+            Authorization:  Bearer [your token here]
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "404"
+            }
+
++ Response 401 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "401"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 获取当前用户的信息 [GET /me]
+
+
++ Request (application/json)
+    + Headers
+
+            Authorization:  Bearer [user's token here]
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "uuid": "8758c471-f7e3-11e6-ab55-080027b55b5e",
+                    "username": "tristian.aufderhar",
+                    "email": "leanna19@kilback.com",
+                    "role_id": null,
+                    "role_type": null,
+                    "status": "active",
+                    "profile": {
+                        "nickname": null,
+                        "realname": null,
+                        "age": null,
+                        "gender": "secret",
+                        "phone": null
+                    }
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 401 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "401"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新当前用户邮箱 [PUT /me/email]
+
+
++ Parameters
+    + email: (string, required) - 用户邮箱，邮箱格式
+
++ Request (application/json)
+    + Headers
+
+            Authorization:  Bearer [user's token here]
+    + Body
+
+            {
+                "data": {
+                    "email": "new_mail@mail.com"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/users/2589
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 401 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "401"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新当前用户的密码 [PUT /me/password]
+
+
++ Parameters
+    + old_password: (string, required) - 用户密码，原密码
+    + password: (string, required) - 用户新密码
+
++ Request (application/json)
+    + Headers
+
+            Authorization: Bearer [user's token here]
+    + Body
+
+            {
+                "data": {
+                    "old_password": "password",
+                    "password": "my_password"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/users/2589
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 401 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "401"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新指定用户信息 [PUT /me/profile]
+
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "nickname": "example",
+                    "realname": "my name",
+                    "age": 18,
+                    "gender": "male",
+                    "phone": "12345678"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/users/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 401 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "401"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 获取用户角色 [GET /me/role]
+
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "id": "12",
+                "user_id": "34",
+                "...": "..."
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "User's role not exists.",
+                "status_code": "404"
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 401 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "401"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 为当前用户添加角色 [POST /me/role]
+仅在新用户绑定角色时适用
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "role_type": "teacher",
+                    "...": "..."
+                }
+            }
+
++ Response 201 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/teacher/2589
+
++ Response 409 (application/json)
+    + Body
+
+            {
+                "message": "User's role exists.",
+                "status_code": "409"
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 401 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "401"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 为当前用户更新角色 [PUT /me/role]
+
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "...": "..."
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/.../2589
+
++ Response 409 (application/json)
+    + Body
+
+            {
+                "message": "User's role exists.",
+                "status_code": "409"
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 401 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "401"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 学生提交pin签到验证码 [POST /me/pin]
+
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "pin": 123123
+                }
+            }
+
++ Response 201 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/attendances/2589
+
++ Response 403 (application/json)
+    + Body
+
+            {
+                "message": "User's role exists.",
+                "status_code": "409"
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 401 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "401"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+# Admin [/admins]
+管理员角色资源表示
+
+## 使用选择的id来查询管理员 [GET /admins/{admin}]
+
+
++ Parameters
+    + admin: (integer, required) - 管理员id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "role": "admin",
+                    "group": "my_group"
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 添加管理员 [POST /admins]
+
+
++ Parameters
+    + group: (string, optional) - 管理员组
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "group": "my_group"
+                }
+            }
+
++ Response 201 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/admins/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not add admin.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新指定管理员 [PUT /admins/{admin}]
+
+
++ Parameters
+    + admin: (integer, optional) - 管理员id
+    + group: (string, optional) - 管理员组
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "group": "my_group"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/admins/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not update admin.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 删除指定id的管理员 [DELETE /admins/{admin}]
+
+
++ Parameters
+    + admin: (integer, required) - 管理员id
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/admins/2589
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not delete an admin.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+# Student [/students]
+学生角色资源表示
+
+## 使用选择的id来查询学生 [GET /students/{student}]
+
+
++ Parameters
+    + student: (integer, required) - 学生id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "role": "student",
+                    "student_number": "4354325223",
+                    "classn_id": "1324",
+                    "profile": "..."
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 添加学生 [POST /students]
+
+
++ Parameters
+    + student_number: (string, optional) - 学号
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "student_number": "4354325223"
+                }
+            }
+
++ Response 201 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/students/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not add student.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新指定学生 [PUT /students/{student}]
+
+
++ Parameters
+    + student: (integer, optional) - 学生id
+    + student_number: (string, optional) - 学号
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "student_number": "4354325223"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/students/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not update student.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 删除指定id的学生 [DELETE /students/{student}]
+
+
++ Parameters
+    + student: (integer, required) - 学生id
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/students/2589
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not delete an student.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 将指定学生添加到班级 [POST /students/{student}/classn]
+
+
++ Parameters
+    + student: (integer, required) - 学生id
+    + classn_id: (integer, required) - 班级id
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "classn_id": "4354325223"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/classns/4354325223
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 409 (application/json)
+    + Body
+
+            {
+                "message": "Student already attached a class.",
+                "status_code": "409"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 为学生解除班级附加 [DELETE /students/{student}/classn]
+
+
++ Parameters
+    + student: (integer, required) - 学生id
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/students/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
+## 使用选择的id来学生所有出席记录 [GET /students/{student}/lessons]
+
+
++ Parameters
+    + student: (integer, required) - 学生id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": [
+                    {
+                        "id": 1231,
+                        "lesson_id": 12312,
+                        "student": 1121,
+                        "timestamp": 1231223324
+                    },
+                    {
+                        "id": 1232,
+                        "lesson_id": 12312,
+                        "student": 1121,
+                        "timestamp": 1231223324
+                    }
+                ]
+            }
+
++ Response 204 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "204"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+# Teacher [/teachers]
+老师角色资源表示
+
+## 使用选择的id来查询老师 [GET /teachers/{teacher}]
+
+
++ Parameters
+    + teacher: (integer, required) - 老师id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "role": "teacher",
+                    "employee_number": "4354325223",
+                    "profile": "..."
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 添加老师 [POST /teachers]
+
+
++ Parameters
+    + employee_number: (string, optional) - 工号
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "employee_number": "4354325223"
+                }
+            }
+
++ Response 201 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/teachers/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not add teacher.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新指定老师 [PUT /teachers/{teacher}]
+
+
++ Parameters
+    + teacher: (integer, optional) - 老师id
+    + employee_number: (string, optional) - 工号
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "employee_number": "4354325223"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/teachers/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not update teacher.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 删除指定id的老师 [DELETE /teachers/{teacher}]
+
+
++ Parameters
+    + teacher: (integer, required) - 老师id
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/teachers/2589
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not delete an teacher.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 使用选择的id来查询老师所有课程 [GET /teachers/{teacher}/courses]
+
+
++ Parameters
+    + classn: (integer, required) - 老师id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": [
+                    {
+                        "id": 1231,
+                        "name": "课程1",
+                        "teacher_id": 12312
+                    },
+                    {
+                        "id": 1232,
+                        "name": "课程2",
+                        "teacher_id": 12312
+                    }
+                ]
+            }
+
++ Response 204 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "204"
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+# Attendance [/attendances]
+出勤记录资源表示
+
+## 使用选择的id来查询出勤记录 [GET /attendances/{attendance}]
+
+
++ Parameters
+    + attendance: (integer, required) - 出勤记录id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "student_id": 1123,
+                    "lesson_id": 122,
+                    "timestamp": 1231223324
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 添加出勤记录 [POST /attendances]
+
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "student_id": 1231,
+                    "lesson_id": 11
+                }
+            }
+
++ Response 201 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/attendances/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not add attendance.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 删除指定id的出勤记录 [DELETE /attendances/{attendance}]
+
+
++ Parameters
+    + attendance: (integer, required) - 出勤记录id
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/attendances/2589
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not delete attendance.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新指定出勤记录 [PUT /attendances/{attendance}]
+
+
++ Parameters
+    + attendance: (integer, optional) - 出勤记录id
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "...": "..."
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/attendances/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not update attendance.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 获取出勤记录的平铺信息 [GET /attendances/{attendance}]
+响应中将展开课时和学生
+
++ Parameters
+    + attendance: (integer, required) - 出勤记录id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "student": {
+                        "...": "..."
+                    },
+                    "lesson": {
+                        "...": "..."
+                    },
+                    "timestamp": 1231223324
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found.",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+# Classn [/classns]
+班级资源表示
+
+## 使用选择的id来查询班级 [GET /classns/{classn}]
+
+
++ Parameters
+    + classn: (integer, required) - 班级id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "name": "classn name"
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 添加班级 [POST /classns]
+
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "name": "classn name"
+                }
+            }
+
++ Response 201 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/classns/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not add classn.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 删除指定id的班级 [DELETE /classns/{classn}]
+
+
++ Parameters
+    + classn: (integer, required) - 班级id
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/classns/2589
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not delete classn.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新指定班级 [PUT /classns/{classn}]
+
+
++ Parameters
+    + classn: (integer, optional) - 班级id
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "name": "classn name"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/classns/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not update classn.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 使用选择的id来查询班级所有课程 [GET /classns/{classn}/courses]
+
+
++ Parameters
+    + classn: (integer, required) - 班级id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": [
+                    {
+                        "id": 1231,
+                        "name": "课程1",
+                        "teacher_id": 12312
+                    },
+                    {
+                        "id": 1232,
+                        "name": "课程2",
+                        "teacher_id": 12312
+                    }
+                ]
+            }
+
++ Response 204 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "204"
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 使用选择的id来查询班级所有学生 [GET /classns/{classn}/students]
+
+
++ Parameters
+    + classn: (integer, required) - 班级id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": [
+                    {
+                        "id": 1231,
+                        "role": "student",
+                        "classn_id": 1112,
+                        "profile": "..."
+                    },
+                    {
+                        "id": 1232,
+                        "role": "student",
+                        "classn_id": 1112,
+                        "profile": "..."
+                    }
+                ]
+            }
+
++ Response 204 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "204"
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+# Course [/courses]
+课程资源表示
+
+## 使用选择的id来查询课程 [GET /courses/{course}]
+
+
++ Parameters
+    + course: (integer, required) - 课程id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "teacher_id": 12312,
+                    "name": "课程1"
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 使用选择的id来查询课程详细信息 [GET /courses/{course}.flat]
+
+
++ Parameters
+    + course: (integer, required) - 课程id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "teacher": {
+                        "...": "..."
+                    },
+                    "name": "课程1",
+                    "lessons": {
+                        "...": "..."
+                    }
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 添加课程 [POST /courses]
+
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "...": "..."
+                }
+            }
+
++ Response 201 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/courses/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not add course.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 删除指定id的课程 [DELETE /courses/{course}]
+
+
++ Parameters
+    + course: (integer, required) - 课程id
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/courses/2589
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not delete course.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新指定课程 [PUT /courses/{course}]
+
+
++ Parameters
+    + course: (integer, optional) - 课程id
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "name": "课程1"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/courses/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not update course.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 将指定课程添加到老师 [POST /courses/{course}/teacher]
+
+
++ Parameters
+    + course: (integer, required) - 课程id
+    + teacher_id: (integer, required) - 老师id
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "teacher_id": "4354325223"
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/teachers/4354325223
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 409 (application/json)
+    + Body
+
+            {
+                "message": "Course already attached a teacher.",
+                "status_code": "409"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 为课程解除老师附加 [DELETE /courses/{course}/teacher]
+
+
++ Parameters
+    + course: (integer, required) - 课程id
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/courses/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
+## 为课程添加课时 [POST /courses/{course}/lessons]
+
+
++ Parameters
+    + course: (integer, required) - 课程id
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": []
+            }
+
++ Response 201 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/lessons/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not add lesson.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 使用选择的id来查询课程所有班级 [GET /courses/{course}/classns]
+
+
++ Parameters
+    + course: (integer, required) - 课程id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": [
+                    {
+                        "id": 1231,
+                        "name": "班级1"
+                    },
+                    {
+                        "id": 1232,
+                        "name": "班级2"
+                    }
+                ]
+            }
+
++ Response 204 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "204"
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 使用选择的id来查询课程所有课时 [GET /courses/{course}/lessons]
+
+
++ Parameters
+    + course: (integer, required) - 课程id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": [
+                    {
+                        "id": 1231,
+                        "course_id": 12312,
+                        "timestamp": 1231223324
+                    },
+                    {
+                        "id": 1232,
+                        "course_id": 12312,
+                        "timestamp": 1231223324
+                    }
+                ]
+            }
+
++ Response 204 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "204"
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 为课程连接班级 [PUT /courses/{course}/classns]
+
+
++ Parameters
+    + course: (integer, required) - 课程id
+    + classn_id: (integer, required) - 班级id
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "classn_id": 11123
+                }
+            }
+
++ Response 201 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/classns/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not add lesson.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+# Lesson [/lessons]
+课时资源表示
+
+## 使用选择的id来查询课时 [GET /lessons/{lesson}]
+
+
++ Parameters
+    + lesson: (integer, required) - 课时id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "id": 6179,
+                    "course_id": 12312,
+                    "timestamp": 1231223324
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 删除指定id的课时 [DELETE /lessons/{lesson}]
+
+
++ Parameters
+    + lesson: (integer, required) - 课时id
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/lessons/2589
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not delete lesson.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 更新指定课时 [PUT /lessons/{lesson}]
+
+
++ Parameters
+    + lesson: (integer, optional) - 课时id
+
++ Request (application/json)
+    + Body
+
+            {
+                "data": {
+                    "...": "..."
+                }
+            }
+
++ Response 202 (application/json)
+    + Headers
+
+            location: http://api.ocicat.dev/lessons/2589
+
++ Response 400 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "400"
+            }
+
++ Response 422 (application/json)
+    + Body
+
+            {
+                "message": "Could not update lesson.",
+                "status_code": 422
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 使用选择的id来查询课时所有出席记录 [GET /lessons/{lesson}/lessons]
+
+
++ Parameters
+    + lesson: (integer, required) - 课时id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": [
+                    {
+                        "id": 1231,
+                        "lesson_id": 12312,
+                        "student": 1121,
+                        "timestamp": 1231223324
+                    },
+                    {
+                        "id": 1232,
+                        "lesson_id": 12312,
+                        "student": 1121,
+                        "timestamp": 1231223324
+                    }
+                ]
+            }
+
++ Response 204 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "204"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }
+
+## 使用选择的id来查询课时的签到验证码pin [GET /lessons/{lesson}/pin]
+
+
++ Parameters
+    + lesson: (integer, required) - 课时id
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "data": {
+                    "pin": 11111
+                }
+            }
+
++ Response 404 (application/json)
+    + Body
+
+            {
+                "message": "404 Not Found",
+                "status_code": "404"
+            }
+
++ Response 500 (application/json)
+    + Body
+
+            {
+                "message": "",
+                "status_code": "500"
+            }

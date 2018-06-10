@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Ocicat-API-pre1" default="dist">
+
+    <!-- ============================================  -->
+    <!-- Target: prepare                               -->
+    <!-- ============================================  -->
+    <target name="prepare">
+        <echo msg="Clean ./build ./dist"/>
+        <delete dir="./build" includeemptydirs="true" failonerror="false" />
+        <delete dir="./dist" includeemptydirs="true" failonerror="false" />
+
+        <echo msg="Making directory ./build ./dist"/>
+        <mkdir dir="./build"/>
+        <mkdir dir="./dist"/>
+
+        <echo msg="Composer install..."/>
+        <composer command="install" composer="C:\php56\composer.phar" />
+
+        <echo msg="Reset Database" />
+        <pdosqlexec url="mysql:host=localhost;dbname=test"
+                    userid="root"
+                    password="A123bmysql!"
+        >
+            <fileset dir="database/" >
+                <include name="reset.sql" />
+            </fileset>
+        </pdosqlexec>
+    </target>
+
+    <!-- ============================================  -->
+    <!-- Target: test                                  -->
+    <!-- ============================================  -->
+    <target name="test" depends="prepare">
+        <echo msg="Copying ./.env.jk to ./.env"/>
+        <copy file="./.env.jk" tofile="./.env"/>
+
+        <echo msg="Running test..."/>
+        <!--<phpunit-->
+                <!--pharlocation="C:\php56\phpunit.phar"-->
+                <!--configuration="./phpunit.xml"-->
+                <!--printsummary="true"-->
+                <!--haltonerror="true"-->
+        <!--&gt;</phpunit>-->
+        <exec command="phpunit --log-junit ./dist/phpunit-result.xml --stop-on-failure" passthru="true" checkreturn="true" />
+    </target>
+
+    <!-- ============================================  -->
+    <!-- Target: build                                 -->
+    <!-- ============================================  -->
+    <target name="build" depends="test">
+        <echo msg="Copy files to build directory..."/>
+        <copy file="./.env.dev" tofile="./build/.env" overwrite="true"/>
+        <copy todir="./build" >
+            <fileset dir="." defaultexcludes="true">
+                <include name="app/**" />
+                <include name="bootstrap/**" />
+                <include name="config/**" />
+                <include name="database/**" />
+                <include name="public/**" />
+                <include name="resources/**" />
+                <include name="storage/**" />
+                <include name="vendor/**" />
+                <include name="artisan"/>
+                <include name="composer.*" />
+            </fileset>
+        </copy>
+
+    </target>
+
+    <!-- ============================================  -->
+    <!-- (DEFAULT)  Target: dist                       -->
+    <!-- ============================================  -->
+    <target name="dist" depends="build">
+        <echo msg="Creating archive..."/>
+
+        <zip destfile="./dist/build.zip">
+            <fileset dir="./build">
+                <include name="**"/>
+            </fileset>
+        </zip>
+
+        <echo msg="Files copied and compressed in build directory OK!"/>
+    </target>
+</project>
