@@ -7,5 +7,5 @@
 
 * [API使用文档](https://revonia.github.io/ocicat-api/)
 * [奥西签到 Web 界面 Github](https://github.com/revonia/ocicat-web)
-* [演示站](http://ocicat.mark-out.net) 
+* [演示站](https://ocicat.mark-out.net) 
 
