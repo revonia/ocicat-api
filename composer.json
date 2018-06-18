@@ -1,8 +1,8 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
-    "license": "MIT",
+    "name": "revonia/ocicat-api",
+    "description": "Restful api for ocicat",
+    "keywords": ["restful", "ocicat"],
+    "license": "GPLv3",
     "type": "project",
     "require": {
         "php": ">=5.5.9",
