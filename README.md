@@ -5,7 +5,7 @@
 
 接口测试采用 PHPUnit，运行 `vendor/bin/phpunit` 即可。
 
-* [API使用文档]()
+* [API使用文档](https://revonia.github.io/ocicat-api/)
 * [奥西签到 Web 界面 Github](https://github.com/revonia/ocicat-web)
 * [演示站](http://ocicat.mark-out.net) 
 
